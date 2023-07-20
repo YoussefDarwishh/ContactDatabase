@@ -5,7 +5,7 @@ module default {
         required Email: str;
         required Title: str;
         required Description: str;
-        required DateOfBirth: cal::local_datetime;
+        required DateOfBirth: datetime;
         required MarriageStatus: bool;
     }
 }

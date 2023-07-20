@@ -15,12 +15,13 @@ public class IndexModel : PageModel
         _client = client;
     }
 
-    public void OnGet()
+    public async Task OnGetAsync()
     {
-        Contacts = GetContactsFromDatabase();
+        Contacts = await GetContactsFromDatabaseAsync();
     }
 
-    public IActionResult OnPost()
+
+    public async Task<IActionResult> OnPostAsync()
     {
         var contact = new Contact
         {
@@ -32,16 +33,31 @@ public class IndexModel : PageModel
             DateOfBirth = DateTime.Parse(Request.Form["DateOfBirth"]),
             MarriageStatus = Request.Form.ContainsKey("MarriageStatus")
         };
+
+        await _client.ExecuteAsync("INSERT Contact { FirstName := <str>$firstName, LastName := <str>$lastName, Email := <str>$email, Title := <str>$title, Description := <str>$description, DateOfBirth := <datetime>$dateOfBirth, MarriageStatus := <bool>$marriageStatus }",
+                        new Dictionary<string, object>
+                        {
+                        { "firstName", contact.FirstName },
+                        { "lastName", contact.LastName },
+                        { "email", contact.Email },
+                        { "title", contact.Title },
+                        { "description", contact.Description },
+                        { "dateOfBirth", contact.DateOfBirth },
+                        { "marriageStatus", contact.MarriageStatus }
+                        });
+
         return RedirectToPage();
     }
 
-    private List<Contact> GetContactsFromDatabase()
-    {
 
-        return new List<Contact>
-        {
-        };
+
+    private async Task<List<Contact>> GetContactsFromDatabaseAsync()
+    {
+        var result = await _client.QueryAsync<Contact>("SELECT Contact { FirstName, LastName, Email, Title, Description, DateOfBirth, MarriageStatus }");
+        return result.ToList();
     }
+
+
 }
 
 public class Contact
