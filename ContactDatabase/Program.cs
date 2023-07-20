@@ -1,14 +1,9 @@
 using EdgeDB;
-
-var client = new EdgeDBClient();
-var result = await client.QuerySingleAsync<string>("SELECT \"Hello, World!\"");
-
-Console.WriteLine(result);
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-
+builder.Services.AddEdgeDB();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

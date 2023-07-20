@@ -2,11 +2,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
+using EdgeDB;
 namespace ContactDatabase.Pages;
 
 public class IndexModel : PageModel
 {
+    private readonly EdgeDBClient _client;
     public List<Contact> Contacts { get; set; }
+
+    public IndexModel(EdgeDBClient client)
+    {
+        _client = client;
+    }
 
     public void OnGet()
     {
