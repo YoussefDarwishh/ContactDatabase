@@ -5,7 +5,7 @@ module default {
         required Email: str;
         required Title: str;
         required Description: str;
-        required DateOfBirth: datetime;
+        required BirthDate: datetime;
         required MarriageStatus: bool;
     }
 }
