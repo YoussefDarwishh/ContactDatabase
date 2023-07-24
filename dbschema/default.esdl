@@ -1,11 +1,11 @@
 module default {
     type Contact {
-        required FirstName: str;
-        required LastName: str;
-        required Email: str;
-        required Title: str;
-        required Description: str;
-        required BirthDate: datetime;
-        required MarriageStatus: bool;
+        required first_name: str;
+        required last_name: str;
+        required email: str;
+        required title: str;
+        required description: str;
+        required date_of_birth: datetime;
+        required marriage_status: bool;
     }
 }

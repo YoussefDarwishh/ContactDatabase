@@ -34,7 +34,7 @@ public class IndexModel : PageModel
             MarriageStatus = Request.Form.ContainsKey("MarriageStatus")
         };
 
-        await _client.ExecuteAsync("INSERT Contact { FirstName := <str>$firstName, LastName := <str>$lastName, Email := <str>$email, Title := <str>$title, Description := <str>$description, DateOfBirth := <datetime>$dateOfBirth, MarriageStatus := <bool>$marriageStatus }",
+        await _client.ExecuteAsync("INSERT Contact { first_name := <str>$firstName, last_name := <str>$lastName, email := <str>$email, title := <str>$title, description := <str>$description, date_of_birth := <datetime>$dateOfBirth, marriage_status := <bool>$marriageStatus }",
                         new Dictionary<string, object>
                         {
                         { "firstName", contact.FirstName },
@@ -53,7 +53,7 @@ public class IndexModel : PageModel
 
     private async Task<List<Contact>> GetContactsFromDatabaseAsync()
     {
-        var result = await _client.QueryAsync<Contact>("SELECT Contact { FirstName, LastName, Email, Title, Description, DateOfBirth, MarriageStatus }");
+        var result = await _client.QueryAsync<Contact>("SELECT Contact { first_name, last_name, email, title, description, date_of_birth, marriage_status }");
         return result.ToList();
     }
 
