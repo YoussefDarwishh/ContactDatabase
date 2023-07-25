@@ -7,5 +7,8 @@ module default {
         required description: str;
         required date_of_birth: datetime;
         required marriage_status: bool;
+        required username: str;
+        required password: str;
+        required role: str;
     }
 }

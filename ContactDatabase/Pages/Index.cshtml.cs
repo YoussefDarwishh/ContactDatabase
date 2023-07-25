@@ -31,20 +31,29 @@ public class IndexModel : PageModel
             Title = Request.Form["Title"],
             Description = Request.Form["Description"],
             DateOfBirth = DateTime.Parse(Request.Form["DateOfBirth"]),
-            MarriageStatus = Request.Form.ContainsKey("MarriageStatus")
+            MarriageStatus = Request.Form.ContainsKey("MarriageStatus"),
+            Username = Request.Form["Username"],
+            Password = Request.Form["Password"],
+            Role = Request.Form["Role"]
         };
 
-        await _client.ExecuteAsync("INSERT Contact { first_name := <str>$firstName, last_name := <str>$lastName, email := <str>$email, title := <str>$title, description := <str>$description, date_of_birth := <datetime>$dateOfBirth, marriage_status := <bool>$marriageStatus }",
-                        new Dictionary<string, object>
-                        {
-                        { "firstName", contact.FirstName },
-                        { "lastName", contact.LastName },
-                        { "email", contact.Email },
-                        { "title", contact.Title },
-                        { "description", contact.Description },
-                        { "dateOfBirth", contact.DateOfBirth },
-                        { "marriageStatus", contact.MarriageStatus }
-                        });
+        await _client.ExecuteAsync($$"""                       
+        INSERT Contact {                                   
+            first_name := "{{contact.FirstName}}",                                   
+            last_name := "{{contact.LastName}}",                                   
+            email := "{{contact.Email}}",                                   
+            title := "{{contact.Title}}",                                   
+            description := "{{contact.Description}}",                                   
+            date_of_birth := <datetime>"{{contact.DateOfBirth.ToString("yyyy-MM-ddTHH:mm:ssZ")}}",                                   
+            marriage_status := {{contact.MarriageStatus}},
+            username := "{{contact.Username}}",                                   
+            password := "{{contact.Password}}",                                   
+            role := "{{contact.Role}}"
+        }           
+    """);
+
+
+
 
         return RedirectToPage();
     }
@@ -62,11 +71,33 @@ public class IndexModel : PageModel
 
 public class Contact
 {
+    [EdgeDBProperty("first_name")]
     public string FirstName { get; set; }
+
+    [EdgeDBProperty("last_name")]
     public string LastName { get; set; }
+
+    [EdgeDBProperty("email")]
     public string Email { get; set; }
+
+    [EdgeDBProperty("title")]
     public string Title { get; set; }
+
+    [EdgeDBProperty("description")]
     public string Description { get; set; }
+
+    [EdgeDBProperty("date_of_birth")]
     public DateTime DateOfBirth { get; set; }
+
+    [EdgeDBProperty("marriage_status")]
     public bool MarriageStatus { get; set; }
+
+    [EdgeDBProperty("username")]
+    public string Username { get; set; }
+
+    [EdgeDBProperty("password")]
+    public string Password { get; set; }
+
+    [EdgeDBProperty("role")]
+    public string Role { get; set; }
 }
