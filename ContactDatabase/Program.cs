@@ -1,9 +1,16 @@
+using ContactDatabase.Pages;
 using EdgeDB;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddEdgeDB();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
+builder.Services.AddScoped<IPasswordHasher<Contact>, PasswordHasher<Contact>>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

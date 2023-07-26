@@ -20,7 +20,6 @@ public class AdminModel : PageModel
         Contacts = await GetContactsFromDatabaseAsync();
     }
 
-
     public async Task<IActionResult> OnPostAsync()
     {
         var contact = new Contact
@@ -58,8 +57,6 @@ public class AdminModel : PageModel
         return RedirectToPage();
     }
 
-
-
     private async Task<List<Contact>> GetContactsFromDatabaseAsync()
     {
         var result = await _client.QueryAsync<Contact>("SELECT Contact { first_name, last_name, email, title, description, date_of_birth, marriage_status }");
@@ -67,4 +64,36 @@ public class AdminModel : PageModel
     }
 
 
+}
+public class Contact
+{
+    [EdgeDBProperty("first_name")]
+    public string FirstName { get; set; }
+
+    [EdgeDBProperty("last_name")]
+    public string LastName { get; set; }
+
+    [EdgeDBProperty("email")]
+    public string Email { get; set; }
+
+    [EdgeDBProperty("title")]
+    public string Title { get; set; }
+
+    [EdgeDBProperty("description")]
+    public string Description { get; set; }
+
+    [EdgeDBProperty("date_of_birth")]
+    public DateTime DateOfBirth { get; set; }
+
+    [EdgeDBProperty("marriage_status")]
+    public bool MarriageStatus { get; set; }
+
+    [EdgeDBProperty("username")]
+    public string Username { get; set; }
+
+    [EdgeDBProperty("password")]
+    public string Password { get; set; }
+
+    [EdgeDBProperty("role")]
+    public string Role { get; set; }
 }
