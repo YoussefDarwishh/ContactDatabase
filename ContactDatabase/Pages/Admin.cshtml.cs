@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
 using EdgeDB;
+using Microsoft.AspNetCore.Identity;
+
 namespace ContactDatabase.Pages;
 
 public class AdminModel : PageModel
@@ -36,6 +38,9 @@ public class AdminModel : PageModel
             Role = Request.Form["Role"]
         };
 
+        var passwordHasher = new PasswordHasher<string>();
+        contact.Password = passwordHasher.HashPassword(null, contact.Password);
+
         await _client.ExecuteAsync($$"""                       
         INSERT Contact {                                   
             first_name := "{{contact.FirstName}}",                                   
@@ -51,9 +56,6 @@ public class AdminModel : PageModel
         }           
     """);
 
-
-
-
         return RedirectToPage();
     }
 
@@ -62,8 +64,6 @@ public class AdminModel : PageModel
         var result = await _client.QueryAsync<Contact>("SELECT Contact { first_name, last_name, email, title, description, date_of_birth, marriage_status }");
         return result.ToList();
     }
-
-
 }
 public class Contact
 {
