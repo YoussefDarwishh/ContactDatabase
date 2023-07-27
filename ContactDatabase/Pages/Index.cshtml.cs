@@ -35,6 +35,23 @@ public class IndexModel : PageModel
             ModelState.AddModelError("", "Invalid Login Attempt");
             return Page();
         }
+        var results = await _client.QueryAsync<Contact>("SELECT Contact {*} FILTER .username = <str>$username", new Dictionary<string, object?>
+        {
+            { "username", LoginInput.Username }
+        });
+        Contact? user = results.FirstOrDefault();
+
+        if (user is not null)
+        {
+            PasswordVerificationResult result = _passwordHasher.VerifyHashedPassword(user, user.Password, LoginInput.Password);
+            if(result == PasswordVerificationResult.Success)
+            {
+                if (user.Role == "admin")
+                    return RedirectToPage("/Admin");
+                else
+                    return RedirectToPage("/User");
+            }
+        }
         return Page();
     }
     public async Task<IActionResult> OnPostLogoutAsync()
