@@ -21,7 +21,7 @@ public class UserModel : PageModel
 
     private async Task<List<Contact>> GetContactsFromDatabaseAsync()
     {
-        var result = await _client.QueryAsync<Contact>("SELECT Contact { first_name, last_name, email, title, description, date_of_birth, marriage_status } FILTER .role = 'normal'");
+        var result = await _client.QueryAsync<Contact>("SELECT Contact { id, first_name, last_name, email, title, description, date_of_birth, marriage_status } FILTER .role = 'normal'");
         return result.ToList();
     }
 }

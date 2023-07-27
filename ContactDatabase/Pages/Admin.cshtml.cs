@@ -61,12 +61,15 @@ public class AdminModel : PageModel
 
     private async Task<List<Contact>> GetContactsFromDatabaseAsync()
     {
-        var result = await _client.QueryAsync<Contact>("SELECT Contact { first_name, last_name, email, title, description, date_of_birth, marriage_status }");
+        var result = await _client.QueryAsync<Contact>("SELECT Contact { id, first_name, last_name, email, title, description, date_of_birth, marriage_status }");
         return result.ToList();
     }
 }
 public class Contact
 {
+    [EdgeDBProperty("id")]
+    public string ID { get; set; }
+
     [EdgeDBProperty("first_name")]
     public string FirstName { get; set; }
 
