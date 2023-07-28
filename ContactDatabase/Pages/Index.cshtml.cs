@@ -35,7 +35,7 @@ public class IndexModel : PageModel
             ModelState.AddModelError("", "Invalid Login Attempt");
             return Page();
         }
-        var results = await _client.QueryAsync<Contact>("SELECT Contact {*} FILTER .username = <str>$username", new Dictionary<string, object?>
+        var results = await _client.QueryAsync<Contact>("SELECT Contact { id, first_name, last_name, email, title, description, date_of_birth, marriage_status, username, password, role } FILTER .username = <str>$username", new Dictionary<string, object?>
         {
             { "username", LoginInput.Username }
         });

@@ -97,7 +97,7 @@
                         <td>@contact.DateOfBirth.ToShortDateString()</td>
                         <td>@(contact.MarriageStatus ? "Married" : "Single")</td>
                         <td>
-                            <button class="btn btn-danger" asp-page="Edit" asp-route-id="@contact.ID">Edit</button>
+                            <a asp-page="Edit" asp-route-id="@contact.Id" class="btn">Edit</a>
                         </td>
                     </tr>
                 }

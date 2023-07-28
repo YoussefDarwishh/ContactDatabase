@@ -68,7 +68,7 @@ public class AdminModel : PageModel
 public class Contact
 {
     [EdgeDBProperty("id")]
-    public string ID { get; set; }
+    public Guid Id { get; set; }
 
     [EdgeDBProperty("first_name")]
     public string FirstName { get; set; }
