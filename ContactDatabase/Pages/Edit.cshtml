@@ -50,6 +50,22 @@
                 <label class="form-check-label" for="marriageStatus">Married</label>
             </div>
 
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" asp-for="Contact.Username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" asp-for="Contact.Password" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select class="form-control" asp-for="Contact.Role">
+                    <option value="normal">Normal</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
     </div>

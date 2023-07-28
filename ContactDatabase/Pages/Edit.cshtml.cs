@@ -22,7 +22,7 @@ namespace ContactDatabase.Pages
 
         public async Task<IActionResult> OnGetAsync(Guid id)
         {
-            Contact = await GetContactByIDAsync(ID.ToString());
+            Contact = await GetContactByIDAsync(ID);
             if(Contact == null)
             {
                 return NotFound();
@@ -39,39 +39,52 @@ namespace ContactDatabase.Pages
 
             await UpdateContactAsync();
 
-            return RedirectToPage("/Index");
+            return RedirectToPage("/Admin");
         }
 
-        private async Task<Contact> GetContactByIDAsync(string id)
+        private async Task<Contact> GetContactByIDAsync(Guid id)
         {
             Console.WriteLine("h");
-            var result = await _client.QueryAsync<Contact>("SELECT Contact FILTER .id = <uuid>$id", new { id });
+            string x = "SELECT Contact {*} FILTER .id = <uuid>$id";
+            var parameters = new Dictionary<string, object> { { "id", id } };
+            var result = await _client.QueryAsync<Contact>(x, parameters);
             return result.FirstOrDefault();
         }
+
+
         private async Task UpdateContactAsync()
         {
-            await _client.ExecuteAsync(@"
+            string query = @"
             UPDATE Contact FILTER .id = <uuid>$id
             SET {
-                FirstName := <str>$firstName,
-                LastName := <str>$lastName,
-                Email := <str>$email,
-                Title := <str>$title,
-                Description := <str>$description,
-                DateOfBirth := <cal::local_date>$dateOfBirth,
-                MarriageStatus := <bool>$marriageStatus
-            }",
-                new
-                {
-                    id = ID,
-                    firstName = Contact.FirstName,
-                    lastName = Contact.LastName,
-                    email = Contact.Email,
-                    title = Contact.Title,
-                    description = Contact.Description,
-                    dateOfBirth = Contact.DateOfBirth,
-                    marriageStatus = Contact.MarriageStatus
-                });
+                first_name := <str>$firstName,
+                last_name := <str>$lastName,
+                email := <str>$email,
+                title := <str>$title,
+                description := <str>$description,
+                date_of_birth := <datetime>$dateOfBirth,
+                marriage_status := <bool>$marriageStatus,
+                username := <str>$username,
+                password := <str>$password,
+                role := <str>$role
+            }";
+
+            var parameters = new Dictionary<string, object>
+            {
+                  { "id", ID },
+                { "firstName", Contact.FirstName },
+                { "lastName", Contact.LastName },
+                { "email", Contact.Email },
+                { "title", Contact.Title },
+                { "description", Contact.Description },
+                { "dateOfBirth", Contact.DateOfBirth },
+                { "marriageStatus", Contact.MarriageStatus },
+                { "username", Contact.Username },
+                { "password", Contact.Password },
+                { "role", Contact.Role }
+            };
+
+            await _client.ExecuteAsync(query, parameters);
         }
     }
 }
