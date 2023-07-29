@@ -41,20 +41,35 @@ public class AdminModel : PageModel
         var passwordHasher = new PasswordHasher<string>();
         contact.Password = passwordHasher.HashPassword(null, contact.Password);
 
+        var parameters = new Dictionary<string, object>
+        {
+            { "first_name", contact.FirstName },
+            { "last_name", contact.LastName },
+            { "email", contact.Email },
+            { "title", contact.Title },
+            { "description", contact.Description },
+            { "date_of_birth", contact.DateOfBirth.ToString("yyyy-MM-ddTHH:mm:ssZ") },
+            { "marriage_status", contact.MarriageStatus },
+            { "username", contact.Username },
+            { "password", contact.Password },
+            { "role", contact.Role }
+        };
+
         await _client.ExecuteAsync($$"""                       
         INSERT Contact {                                   
-            first_name := "{{contact.FirstName}}",                                   
-            last_name := "{{contact.LastName}}",                                   
-            email := "{{contact.Email}}",                                   
-            title := "{{contact.Title}}",                                   
-            description := "{{contact.Description}}",                                   
-            date_of_birth := <datetime>"{{contact.DateOfBirth.ToString("yyyy-MM-ddTHH:mm:ssZ")}}",                                   
-            marriage_status := {{contact.MarriageStatus}},
-            username := "{{contact.Username}}",                                   
-            password := "{{contact.Password}}",                                   
-            role := "{{contact.Role}}"
+            first_name := <str>$first_name,                                   
+            last_name := <str>$last_name,                                   
+            email := <str>$email,                                   
+            title := <str>$title,                                   
+            description := <str>$description,                                   
+            date_of_birth := <datetime>$date_of_birth,                                   
+            marriage_status := <bool>$marriage_status,
+            username := <str>$username,                                   
+            password := <str>$password,                                   
+            role := <str>$role
         }           
-    """);
+    """, parameters);
+
 
         return RedirectToPage();
     }

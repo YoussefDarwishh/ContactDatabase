@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using EdgeDB;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace ContactDatabase.Pages
 {
@@ -20,7 +21,7 @@ namespace ContactDatabase.Pages
         [BindProperty]
         public Contact Contact { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(Guid id)
+        public async Task<IActionResult> OnGetAsync()
         {
             Contact = await GetContactByIDAsync(ID);
             if(Contact == null)
@@ -44,16 +45,17 @@ namespace ContactDatabase.Pages
 
         private async Task<Contact> GetContactByIDAsync(Guid id)
         {
-            Console.WriteLine("h");
-            string x = "SELECT Contact {*} FILTER .id = <uuid>$id";
+            string query = "SELECT Contact {*} FILTER .id = <uuid>$id";
             var parameters = new Dictionary<string, object> { { "id", id } };
-            var result = await _client.QueryAsync<Contact>(x, parameters);
+            var result = await _client.QueryAsync<Contact>(query, parameters);
             return result.FirstOrDefault();
         }
 
 
         private async Task UpdateContactAsync()
         {
+            var passwordHasher = new PasswordHasher<string>();
+            Contact.Password = passwordHasher.HashPassword(null, Contact.Password);
             string query = @"
             UPDATE Contact FILTER .id = <uuid>$id
             SET {
