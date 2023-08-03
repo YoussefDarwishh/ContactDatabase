@@ -10,7 +10,13 @@ builder.Services.AddRazorPages();
 builder.Services.AddEdgeDB();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
-builder.Services.AddScoped<IPasswordHasher<Contact>, PasswordHasher<Contact>>();
+builder.Services.AddScoped<IPasswordHasher<ContactInput>, PasswordHasher<ContactInput>>();
+builder.Services.AddScoped<IPasswordHasher<ContactView>, PasswordHasher<ContactView>>();
+
+builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("ContactDatabase"), config =>
+{
+    config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

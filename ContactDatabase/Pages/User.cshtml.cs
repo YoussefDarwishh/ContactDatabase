@@ -7,7 +7,7 @@ namespace ContactDatabase.Pages;
 public class UserModel : PageModel
 {
     private readonly EdgeDBClient _client;
-    public List<Contact> Contacts { get; set; }
+    public List<ContactView> Contacts { get; set; }
 
     public UserModel(EdgeDBClient client)
     {
@@ -19,9 +19,9 @@ public class UserModel : PageModel
         Contacts = await GetContactsFromDatabaseAsync();
     }
 
-    private async Task<List<Contact>> GetContactsFromDatabaseAsync()
+    private async Task<List<ContactView>> GetContactsFromDatabaseAsync()
     {
-        var result = await _client.QueryAsync<Contact>("SELECT Contact { id, first_name, last_name, email, title, description, date_of_birth, marriage_status } FILTER .role = 'normal'");
+        var result = await _client.QueryAsync<ContactView>("SELECT Contact { id, first_name, last_name, email, title, description, date_of_birth, marriage_status } FILTER .role = 'normal'");
         return result.ToList();
     }
 }

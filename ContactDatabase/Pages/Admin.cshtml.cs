@@ -10,7 +10,10 @@ namespace ContactDatabase.Pages;
 public class AdminModel : PageModel
 {
     private readonly EdgeDBClient _client;
-    public List<Contact> Contacts { get; set; }
+    public List<ContactView> Contacts { get; set; }
+
+    [BindProperty]
+    public ContactInput Contact { get; set; }
 
     public AdminModel(EdgeDBClient client)
     {
@@ -24,35 +27,21 @@ public class AdminModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        var contact = new Contact
-        {
-            FirstName = Request.Form["FirstName"],
-            LastName = Request.Form["LastName"],
-            Email = Request.Form["Email"],
-            Title = Request.Form["Title"],
-            Description = Request.Form["Description"],
-            DateOfBirth = DateTime.Parse(Request.Form["DateOfBirth"]),
-            MarriageStatus = Request.Form.ContainsKey("MarriageStatus"),
-            Username = Request.Form["Username"],
-            Password = Request.Form["Password"],
-            Role = Request.Form["Role"]
-        };
-
         var passwordHasher = new PasswordHasher<string>();
-        contact.Password = passwordHasher.HashPassword(null, contact.Password);
+        Contact.Password = passwordHasher.HashPassword(null, Contact.Password);
 
         var parameters = new Dictionary<string, object>
         {
-            { "first_name", contact.FirstName },
-            { "last_name", contact.LastName },
-            { "email", contact.Email },
-            { "title", contact.Title },
-            { "description", contact.Description },
-            { "date_of_birth", contact.DateOfBirth.ToString("yyyy-MM-ddTHH:mm:ssZ") },
-            { "marriage_status", contact.MarriageStatus },
-            { "username", contact.Username },
-            { "password", contact.Password },
-            { "role", contact.Role }
+            { "first_name", Contact.FirstName },
+            { "last_name", Contact.LastName },
+            { "email", Contact.Email },
+            { "title", Contact.Title },
+            { "description", Contact.Description },
+            { "date_of_birth", Contact.DateOfBirth },
+            { "marriage_status", Contact.MarriageStatus },
+            { "username", Contact.Username },
+            { "password", Contact.Password },
+            { "role", Contact.Role }
         };
 
         await _client.ExecuteAsync($$"""                       
@@ -70,48 +59,58 @@ public class AdminModel : PageModel
         }           
     """, parameters);
 
-
         return RedirectToPage();
     }
 
-    private async Task<List<Contact>> GetContactsFromDatabaseAsync()
+    private async Task<List<ContactView>> GetContactsFromDatabaseAsync()
     {
-        var result = await _client.QueryAsync<Contact>("SELECT Contact { id, first_name, last_name, email, title, description, date_of_birth, marriage_status }");
+        var result = await _client.QueryAsync<ContactView>("SELECT Contact {first_name, last_name, email, title, description, username, date_of_birth, marriage_status }");
         return result.ToList();
     }
 }
-public class Contact
-{
-    [EdgeDBProperty("id")]
-    public Guid Id { get; set; }
 
-    [EdgeDBProperty("first_name")]
+public class ContactInput
+{
     public string FirstName { get; set; }
 
-    [EdgeDBProperty("last_name")]
     public string LastName { get; set; }
 
-    [EdgeDBProperty("email")]
     public string Email { get; set; }
 
-    [EdgeDBProperty("title")]
     public string Title { get; set; }
 
-    [EdgeDBProperty("description")]
     public string Description { get; set; }
 
-    [EdgeDBProperty("date_of_birth")]
     public DateTime DateOfBirth { get; set; }
 
-    [EdgeDBProperty("marriage_status")]
     public bool MarriageStatus { get; set; }
 
-    [EdgeDBProperty("username")]
     public string Username { get; set; }
 
-    [EdgeDBProperty("password")]
     public string Password { get; set; }
 
-    [EdgeDBProperty("role")]
+    public string Role { get; set; }
+}
+
+public class ContactView
+{
+    public string FirstName { get; set; }
+
+    public string LastName { get; set; }
+
+    public string Email { get; set; }
+
+    public string Title { get; set; }
+
+    public string Description { get; set; }
+
+    public DateTime DateOfBirth { get; set; }
+
+    public bool MarriageStatus { get; set; }
+
+    public string Username { get; set; }
+
+    public string Password { get; set; }
+
     public string Role { get; set; }
 }

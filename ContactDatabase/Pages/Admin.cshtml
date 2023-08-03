@@ -81,8 +81,10 @@
                     <th>Email</th>
                     <th>Title</th>
                     <th>Description</th>
+                    <th>Username</th>
                     <th>Date of Birth</th>
                     <th>Marriage Status</th>
+                    <th>Edit</th>
                 </tr>
             </thead>
             <tbody>
@@ -94,10 +96,11 @@
                         <td>@contact.Email</td>
                         <td>@contact.Title</td>
                         <td>@contact.Description</td>
+                        <td>@contact.Username</td>
                         <td>@contact.DateOfBirth.ToShortDateString()</td>
                         <td>@(contact.MarriageStatus ? "Married" : "Single")</td>
                         <td>
-                            <a asp-page="Edit" asp-route-id="@contact.Id" class="btn">Edit</a>
+                            <a asp-page="Edit" asp-route-username="@contact.Username" class="btn">Edit</a>
                         </td>
                     </tr>
                 }

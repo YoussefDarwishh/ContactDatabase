@@ -16,9 +16,9 @@ public class IndexModel : PageModel
     [BindProperty]
     public LoginInput LoginInput { get; set; }
     private readonly EdgeDBClient _client;
-    private readonly IPasswordHasher<Contact> _passwordHasher;
+    private readonly IPasswordHasher<ContactView> _passwordHasher;
 
-    public IndexModel(EdgeDBClient client, IPasswordHasher<Contact> passwordHasher)
+    public IndexModel(EdgeDBClient client, IPasswordHasher<ContactView> passwordHasher)
     {
         _client = client;
         _passwordHasher = passwordHasher;
@@ -35,11 +35,11 @@ public class IndexModel : PageModel
             ModelState.AddModelError("", "Invalid Login Attempt");
             return Page();
         }
-        var results = await _client.QueryAsync<Contact>("SELECT Contact { id, first_name, last_name, email, title, description, date_of_birth, marriage_status, username, password, role } FILTER .username = <str>$username", new Dictionary<string, object?>
+        var results = await _client.QueryAsync<ContactView>("SELECT Contact {first_name, last_name, email, title, description, date_of_birth, marriage_status, username, password, role } FILTER .username = <str>$username", new Dictionary<string, object?>
         {
             { "username", LoginInput.Username }
         });
-        Contact? user = results.FirstOrDefault();
+        ContactView? user = results.FirstOrDefault();
 
         if (user is not null)
         {
